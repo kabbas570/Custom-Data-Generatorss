@@ -1,9 +1,5 @@
 import torch
 import torch.nn as nn
-from typing import Any
-
-
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def double_conv(in_channels, out_channels,stride=None):
@@ -33,7 +29,7 @@ def up_conv_(in_channels, out_channels):
         nn.ReLU(inplace=True)
     ) 
 
-class M_UNet(nn.Module):
+class m_unet(nn.Module):
 
     def __init__(self, n_class=1):
         super().__init__()
@@ -51,10 +47,11 @@ class M_UNet(nn.Module):
         self.up_conv2 = up_conv_(64+32+64,32)
         self.up_conv3 = up_conv_(32+32,16)
         self.up_conv4 = up_conv_(16+32,16)
-        self.up_conv4_o = up_conv_(16,1)
+        self.up_conv4_o = nn.Conv2d(16,1, 1)
         self.up_conv5 = up_conv_(16+16,16)
-        self.up_conv5_o = up_conv_(16,1)
-        self.up_conv6 = up_conv_(16+16,1)
+        self.up_conv5_o = nn.Conv2d(16,1, 1)
+        self.up_conv6 = up_conv_(16,16)
+        self.up_conv6_o = nn.Conv2d(16,1, 1)
         self.activation=torch.nn.Sigmoid()
     def forward(self, x1:torch.Tensor,x2:torch.Tensor,x3:torch.Tensor)-> torch.Tensor:
         
@@ -101,33 +98,5 @@ class M_UNet(nn.Module):
         cat6 = torch.cat([u5,conv1_2], dim=1) 
         u6 = self.upsample(cat6) 
         u6 = self.up_conv6(u6)
-        return self.activation(u6),self.activation(u5_o),self.activation(u4_o)
-    
-def m_unet(**kwargs: Any) -> M_UNet:
-    model = M_UNet()
-    return model
-
-
-from torchsummary import summary
-model = m_unet()
-model.to(device=DEVICE,dtype=torch.float)
-summary(model, [(1, 512, 512),(1, 256, 256),(1, 128, 128),])
-
-
-batch_size=1
-image_path = '/Users/kabbas570gmail.com/Documents/Challenge/testing/data/valid1/img'
-mask_path = '/Users/kabbas570gmail.com/Documents/Challenge/testing/data/valid1/seg_gt/'
-
-from g4 import Data_Loader
-val_loader=Data_Loader(image_path,mask_path,batch_size)
-
-from tqdm import tqdm
-loop = tqdm(val_loader)
-for batch_idx, (img1,img2,img3,gt,label) in enumerate(loop):
-            img1 = img1.to(device=DEVICE,dtype=torch.float)
-            img2 = img2.to(device=DEVICE,dtype=torch.float)
-            img3 = img3.to(device=DEVICE,dtype=torch.float)
-            
-            p1=model(img1,img2,img3)
-
-
+        u6_o=self.up_conv6_o(u6)
+        return self.activation(u6_o),self.activation(u5_o),self.activation(u4_o)
