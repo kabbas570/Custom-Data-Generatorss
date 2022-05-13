@@ -5,7 +5,6 @@ from typing import Any
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-
 def double_conv(in_channels, out_channels,stride=None):
     return nn.Sequential(
         nn.Conv2d(in_channels, out_channels, 3,padding='same'),
@@ -54,7 +53,7 @@ class m_unet(nn.Module):
         self.up_conv4_o = nn.Conv2d(16,1, 1)
         self.up_conv5 = up_conv_(16+16,16)
         self.up_conv5_o = nn.Conv2d(16,1, 1)
-        self.up_conv6 = up_conv_(16,16)
+        self.up_conv6 = up_conv_(32,16)
         self.up_conv6_o = nn.Conv2d(16,1, 1)
         self.activation=torch.nn.Sigmoid()
     def forward(self, x1:torch.Tensor,x2:torch.Tensor,x3:torch.Tensor)-> torch.Tensor:
@@ -101,22 +100,10 @@ class m_unet(nn.Module):
         
         cat6 = torch.cat([u5,conv1_2], dim=1) 
         u6 = self.upsample(cat6) 
+        print(u6.shape)
         u6 = self.up_conv6(u6)
         u6_o=self.up_conv6_o(u6)
         return self.activation(u6_o),self.activation(u5_o),self.activation(u4_o)
     
-    
-    
-    
-def model(**kwargs: Any) -> m_unet:
-    model = m_unet()
-    return model
-
-
-from torchsummary import summary
-model = model()
-model.to(device=DEVICE,dtype=torch.float)
-summary(model, [(1, 512, 512),(1, 256, 256),(1, 128, 128),])
-
 
 
