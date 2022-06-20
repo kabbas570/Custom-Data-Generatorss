@@ -17,7 +17,7 @@ def blend(image1,gt,pre, ratio=0.5):
     theta=beta-0.1
 
     #coloring yellow.
-    gt *= [0, 1, 0] ### Green Color for gt's 1
+    gt *= [0.2,0.7, 0] ### Green Color for gt's 1
     pre*=[1,0,0]   ## Red Color for prediciton's 1
     image = image1 * alpha + gt * beta+ pre * theta
     
