@@ -26,9 +26,9 @@ def blend(image1,gt,pre, ratio=0.5):
 
 
 
-img=cv2.imread(r'C:\My data\KeenAI\Data\data\val\img\img_1_216.png')
-g=cv2.imread(r'C:\My data\KeenAI\Data\data\val\gt\img_1_227.png',0)
-p=cv2.imread(r'C:\My data\KeenAI\Data\data\val\gt\img_4_40.png',0)
+img=cv2.imread(r'C:\My data\KeenAI\Data\data\val\img\img_1_216.png') // image
+g=cv2.imread(r'C:\My data\KeenAI\Data\data\val\gt\img_1_227.png',0)  // ground truth
+p=cv2.imread(r'C:\My data\KeenAI\Data\data\val\gt\img_4_40.png',0) // prediction
 
 g = np.stack((g,)*3, axis=-1)
 p = np.stack((p,)*3, axis=-1)
