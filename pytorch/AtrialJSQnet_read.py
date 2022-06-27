@@ -77,12 +77,12 @@ class Dataset_(Dataset):
         gt_LA_dis = np.squeeze(gt_dis, axis=1)
         
         
-        
         if image.shape[0]==576:
          temp=np.zeros([640,640])
          temp1=np.zeros([640,640])
          temp2=np.zeros([640,640])
          temp3=np.zeros([640,640])
+         temp4=np.zeros([640,640])
          
          temp[32:608, 32:608] = image
          image=temp
@@ -94,7 +94,10 @@ class Dataset_(Dataset):
          scars=temp2
          
          temp3[32:608, 32:608] = boundry
-         boundry=temp2
+         boundry=temp3
+         
+         temp4[32:608, 32:608] = gt_LA_dis
+         gt_LA_dis=temp4
         
 
             
