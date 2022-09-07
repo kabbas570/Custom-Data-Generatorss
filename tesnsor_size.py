@@ -21,3 +21,6 @@ size3=s1+s2+s3
 # print("%d bytes" % (img.size * img.itemsize))
 
 # print("%d bytes" % (a1[0].numpy().size * a1[0].numpy().itemsize))
+
+merged_pre=np.float64(merged_pre)
+merged_pre=np.uint8(merged_pre)
